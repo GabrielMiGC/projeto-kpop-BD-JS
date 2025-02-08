@@ -1,0 +1,32 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    container_name: kpop_AS
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pitagorasmelhorprofessor
+      POSTGRES_DB: "kpop_all_stars"
+    ports:
+      - "5431:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: app-web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # Configure as variáveis de ambiente para conexão com o DB, se necessário.
+      DB_USER: postgres
+      DB_PASSWORD: pitagorasmelhorprofessor
+      DB_NAME: "kpop_all_stars"
+      DB_HOST: db
+    depends_on:
+      - db
+
+volumes:
+  db-data:

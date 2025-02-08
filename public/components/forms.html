@@ -1,0 +1,143 @@
+<!-- Formulários -->
+
+<div id="forms">
+    <h2>Adicionar Conglomerado</h2>
+    <form id="conglomeradoForm">
+        <input type="text" id="conglomeradoNome" placeholder="Nome" required />
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <h2>Alterar Conglomerado</h2>
+    <form id="alterarConglomeradoForm">
+        <input type="number" id="conglomeradoIdAlterar" placeholder="ID do Conglomerado" required />
+        <input type="text" id="conglomeradoNovoNome" placeholder="Novo Nome" required />
+        <button type="submit">Alterar</button>
+    </form>
+    
+
+    <h2>Deletar Conglomerado</h2>
+    <form id="deletarConglomeradoForm">
+        <input type="text" id="conglomeradoNomeDeletar" placeholder="Nome do Conglomerado" required />
+        <button type="submit">Deletar</button>
+    </form>
+</div>
+
+
+<h2>Adicionar Empresa</h2>
+<form id="empresaForm">
+    <input type="text" id="empresaNome" placeholder="Nome" required />
+    <input type="number" id="valorMercado" placeholder="Valor de Mercado" required />
+    <input type="number" id="conglomeradoId" placeholder="ID do Conglomerado" />
+    <button type="submit">Adicionar</button>
+</form>
+
+<h2>Alterar Empresa</h2>
+<form id="alterarEmpresaForm">
+    <input type="number" id="empresaIdAlterar" placeholder="ID da Empresa" required />
+    <input type="text" id="empresaNomeAlterar" placeholder="Novo Nome" required />
+    <input type="number" id="empresaValorMercadoAlterar" placeholder="Novo Valor de Mercado" required />
+    <input type="number" id="empresaConglomeradoIdAlterar" placeholder="Novo ID do Conglomerado" required/>
+    <button type="submit">Alterar Empresa</button>
+</form>
+
+<h2>Deletar Empresa</h2>
+<form id="deletarEmpresaForm">
+    <input type="text" id="empresaNomeDeletar" placeholder="Nome da Empresa" required />
+    <button type="submit">Deletar Empresa</button>
+</form>
+
+
+<h2>Adicionar Grupo</h2>
+<form id="grupoForm">
+    <input type="number" id="grupoEmpresaId" placeholder="ID da Empresa" />
+    <input type="text" id="grupoNome" placeholder="Nome" required />
+    <select id="grupoDisbanded">
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+    </select>
+    <input type="date" id="grupoDebute" placeholder="Debute" />
+    <button type="submit">Adicionar</button>
+</form>
+
+<h2>Alterar Grupo</h2>
+<form id="alterarGrupoForm">
+    <input type="number" id="grupoIdAlterar" placeholder="ID do Grupo" required />
+    <input type="text" id="grupoNomeAlterar" placeholder="Novo Nome" required />
+    <select id="grupoDisbandedAlterar">
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+    </select>
+    <input type="date" id="grupoDebuteAlterar" placeholder="Novo Debute" />
+    <input type="number" id="grupoEmpresaIdAlterar" placeholder="Novo ID da Empresa" required />
+    <button type="submit">Alterar Grupo</button>
+</form>
+
+<h2>Deletar Grupo</h2>
+<form id="deletarGrupoForm">
+    <input type="number" id="grupoNomeDeletar" placeholder="ID do Grupo" required />
+    <button type="submit">Deletar Grupo</button>
+</form>
+
+
+<h2>Adicionar Artista</h2>
+<form id="artistaForm">
+    <input type="text" id="artistaNome" placeholder="Nome" required />
+    <select id="artistaAtivo" required>
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+    </select>
+    <input type="number" id="artistaMesesTreino" placeholder="Meses de Treino" required />
+    <input type="text" id="artistaPapel" placeholder="Papel" required />
+    <input type="date" id="artistaDebute" placeholder="Debute" />
+    <input type="number" id="artistaGrupoId" placeholder="ID do Grupo" />
+    <button type="submit">Adicionar</button>
+</form>
+
+<h2>Alterar Artista</h2>
+<form id="alterarArtistaForm">
+    <input type="number" id="artistaIdAlterar" placeholder="ID do Artista" required />
+    <input type="text" id="artistaNomeAlterar" placeholder="Novo Nome" required />
+    <select id="artistaAtivoAlterar">
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+    </select>
+    <input type="number" id="artistaMesesTreinoAlterar" placeholder="Novos Meses de Treino" required />
+    <input type="text" id="artistaPapelAlterar" placeholder="Novo Papel" required />
+    <input type="date" id="artistaDebuteAlterar" placeholder="Novo Debute" />
+    <input type="number" id="artistaGrupoIdAlterar" placeholder="Novo ID do Grupo" />
+    <button type="submit">Alterar Artista</button>
+</form>
+
+<h2>Deletar Artista</h2>
+<form id="deletarArtistaForm">
+    <input type="text" id="artistaNomeDeletar" placeholder="Nome do Artista" required />
+    <button type="submit">Deletar Artista</button>
+</form>
+
+
+<h2>Adicionar Disco</h2>
+<form id="discoForm">
+    <input type="text" id="discoNome" placeholder="Nome do Disco" required />
+    <input type="text" id="discoCompositores" placeholder="Compositores" />
+    <input type="date" id="discoLancamento" placeholder="Data de Lançamento" required />
+    <button type="submit">Adicionar Disco</button>
+</form>
+
+<h2>Alterar Disco</h2>
+<form id="alterarDiscoForm">
+    <input type="number" id="discoIdAlterar" placeholder="ID do Disco" required />
+    <input type="text" id="discoNomeAlterar" placeholder="Novo Nome do Disco" />
+    <input type="text" id="discoCompositoresAlterar" placeholder="Novos Compositores" />
+    <input type="date" id="discoLancamentoAlterar" placeholder="Nova Data de Lançamento" />
+    <button type="submit">Alterar Disco</button>
+</form>
+
+<h2>Deletar Disco pelo Id</h2>
+<form id="deletarDiscoForm">
+    <input type="number" id="discoIdDeletar" placeholder="Id do Disco" required />
+    <button type="submit">Deletar Disco</button>
+</form>
+
+<h2>Discografia</h2>
+<ul id="listaDiscografia"></ul>
+</div>
