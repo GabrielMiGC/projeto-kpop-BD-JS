@@ -26,10 +26,11 @@ const ArtistaModel = {
             if (papelValido.rowCount === 0) {
                 throw new Error('Papel inválido');
             }
+            console.log('Dados para inserção:', { nome, ativo, meses_treino, papel, debute, id_grupo: id_grupo || null });
 
             const result = await client.query(
                 'INSERT INTO artistas (nome, ativo, meses_treino, papel, debute, id_grupo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-                [nome, ativo, meses_treino, papel, debute, id_grupo]
+                [nome, ativo, meses_treino, papel, debute, id_grupo || null]
             );
 
             await client.query('COMMIT');
@@ -43,8 +44,8 @@ const ArtistaModel = {
         }
     },
 
-    alterar: async (nome, novosDados) => {
-        const {novoNome, ativo, meses_treino, papel, debute, id_grupo} = novosDados;
+    alterar: async (id, novosDados) => {
+        const {nome, ativo, meses_treino, papel, debute, id_grupo} = novosDados;
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -58,8 +59,8 @@ const ArtistaModel = {
             }
 
             const result = await client.query(
-                'UPDATE artistas SET nome = COALESCE($1, nome), ativo = COALESCE($2, ativo), meses_treino = COALESCE($3, meses_treino), papel = COALESCE($4, papel), debute = COALESCE($5, debute), id_grupo = COALESCE($6, id_grupo) WHERE nome = $7 RETURNING *',
-                [novoNome, ativo, meses_treino, papel, debute, id_grupo, nome]
+                'UPDATE artistas SET nome = COALESCE($1, nome), ativo = COALESCE($2, ativo), meses_treino = COALESCE($3, meses_treino), papel = COALESCE($4, papel), debute = COALESCE($5, debute), id_grupo = COALESCE($6, id_grupo) WHERE id_artista = $7 RETURNING *',
+                [nome || null, ativo, meses_treino, papel, debute, id_grupo || null, id]
             );
 
             if (result.rowCount === 0) {
@@ -77,8 +78,8 @@ const ArtistaModel = {
         }
     },
 
-    delete: async (nome) => {
-        const result = await pool.query('DELETE FROM artistas WHERE nome = $1 RETURNING *', [nome]);
+    delete: async (id) => {
+        const result = await pool.query('DELETE FROM artistas WHERE id_artista = $1 RETURNING *', [id]);
         if (result.rowCount === 0) {
             throw new Error('Artista não encontrado');
         }

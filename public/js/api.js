@@ -2,12 +2,12 @@ const API_BASE = "/api";
 
 async function fetchData(endpoint) {
     try {
-        const response = await fetch(`${API_BASE}${endpoint}`);
+        const response = await fetch(endpoint);
         if (!response.ok) throw new Error(`Erro: ${response.statusText}`);
         return await response.json();
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
-        alert("Erro ao carregar dados.");
+        return [];
     }
 }
 

@@ -9,19 +9,30 @@ async function loadComponent(url, elementId) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function atualizarListas() {
+    const conglomerados = await fetchData("/api/conglomerados");
+    updateList("listaConglomerados", conglomerados);
 
+    const empresas = await fetchData("/api/empresas");
+    updateList("listaEmpresas", empresas);
+
+    const grupos = await fetchData("/api/grupos");
+    updateList("listaGrupos", grupos);
+
+    const artistas = await fetchData("/api/artistas");
+    updateList("listaArtistas", artistas);
+
+    const discografia = await fetchData("/api/discografia");
+    updateList("listaDiscografia", discografia);
+}
+
+
+document.addEventListener("DOMContentLoaded", async () => {
     await loadComponent("components/forms.html", "content");
     await loadComponent("components/lists.html", "content");
 
-
     addEventListeners();
-
-    await fetchData("/conglomerados", "listaConglomerados");
-    await fetchData("/empresas", "listaEmpresas");
-    await fetchData("/grupos", "listaGrupos");
-    await fetchData("/artistas", "listaArtistas");
-    await fetchData("/discografia", "listaDiscografia");
+    await atualizarListas();
 });
 
 async function carregarPapeis() {
@@ -30,8 +41,9 @@ async function carregarPapeis() {
         if (!response.ok) throw new Error('Erro ao carregar papéis');
 
         const papeis = await response.json();
-        console.log("Papéis carregados:", papeis);
+        console.log("Papéis carregados:", papeis); // Debug
 
+  
         const selects = [
             document.getElementById('artistaPapel'),
             document.getElementById('artistaPapelAlterar')
@@ -39,7 +51,15 @@ async function carregarPapeis() {
 
         selects.forEach(select => {
             if (select) {
-                select.innerHTML = ''; // Limpar opções anteriores
+                select.innerHTML = ''; 
+
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "Selecione um papel";
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                select.appendChild(defaultOption);
+
                 papeis.forEach(papel => {
                     const option = document.createElement('option');
                     option.value = papel.nome;
@@ -48,6 +68,7 @@ async function carregarPapeis() {
                 });
             }
         });
+
     } catch (error) {
         console.error('Erro ao carregar papéis:', error);
     }
@@ -64,7 +85,7 @@ function addEventListeners() {
             e.preventDefault();
             const nome = document.getElementById("conglomeradoNome").value;
             await postData("/conglomerados", { nome });
-            fetchData("/conglomerados", "listaConglomerados");
+            await atualizarListas();
         });
     }
 
@@ -77,7 +98,8 @@ function addEventListeners() {
 
 
             await putData(`/conglomerados/${id}`, { novoNome });
-            fetchData("/conglomerados", "listaConglomerados");
+            await atualizarListas();
+
         });
     }
 
@@ -89,8 +111,8 @@ function addEventListeners() {
 
             try {
                 await deleteData(`/conglomerados/${nome}`);
+                await atualizarListas();
                 alert("Conglomerado deletado com sucesso!");
-                fetchData("/conglomerados", "listaConglomerados");
             } catch (err) {
                 console.error("Erro ao deletar conglomerado:", err);
                 alert(err.message);
@@ -112,7 +134,7 @@ function addEventListeners() {
                 conglomerado_id: conglomeradoId
             });
 
-            fetchData("/empresas", "listaEmpresas");
+            await atualizarListas();
         });
     }
     
@@ -129,7 +151,7 @@ function addEventListeners() {
                 valor_de_mercado: valorMercado,
                 conglomerado_id: conglomeradoId
             });
-            fetchData("/empresas", "listaEmpresas");
+            await atualizarListas();
         });
     }
 
@@ -142,7 +164,7 @@ function addEventListeners() {
             try {
                 await deleteData(`/empresas/${nome}`);
                 alert("Empresa deletada com sucesso!");
-                fetchData("/empresas", "listaEmpresas");
+                await atualizarListas();
             } catch (err) {
                 console.error("Erro ao deletar empresa:", err);
                 alert(err.message);
@@ -171,7 +193,7 @@ function addEventListeners() {
                 id_empresa: idEmpresa,
             });
 
-            fetchData("/grupos", "listaGrupos");
+            await atualizarListas();
         });
     }
 
@@ -197,7 +219,7 @@ function addEventListeners() {
                 id_empresa: idEmpresa,
             });
 
-            fetchData("/grupos", "listaGrupos");
+            await atualizarListas();
         });
     }
 
@@ -210,7 +232,7 @@ function addEventListeners() {
             try {
                 await deleteData(`/grupos/${nome}`);
                 alert("Grupo deletado com sucesso!");
-                fetchData("/grupos", "listaGrupos");
+                await atualizarListas();
             } catch (err) {
                 console.error("Erro ao deletar grupo:", err);
                 alert(err.message);
@@ -227,12 +249,9 @@ function addEventListeners() {
             const mesesTreino = document.getElementById("artistaMesesTreino").value;
             const papel = document.getElementById("artistaPapel").value;
             const debute = document.getElementById("artistaDebute").value || null;
-            const idGrupo = parseInt(document.getElementById("artistaGrupoId").value);
+            const idGrupo = parseInt(document.getElementById("artistaGrupoId").value || null);
 
-            if (isNaN(idGrupo)) {
-                alert("O ID do grupo deve ser um número válido!");
-                return;
-            }
+            console.log('Dados enviados:', { nome, ativo, meses_treino: mesesTreino, papel, debute, id_grupo: idGrupo });
 
             await postData("/artistas", {
                 nome,
@@ -243,7 +262,7 @@ function addEventListeners() {
                 id_grupo: idGrupo,
             });
 
-            fetchData("/artistas", "listaArtistas");
+            await atualizarListas();
         });
     }
 
@@ -257,12 +276,8 @@ function addEventListeners() {
             const mesesTreino = document.getElementById("artistaMesesTreinoAlterar").value;
             const papel = document.getElementById("artistaPapelAlterar").value;
             const debute = document.getElementById("artistaDebuteAlterar").value || null;
-            const idGrupo = parseInt(document.getElementById("artistaGrupoIdAlterar").value);
+            const idGrupo = parseInt(document.getElementById("artistaGrupoIdAlterar").value || null);
 
-            if (isNaN(idGrupo)) {
-                alert("O ID do grupo deve ser um número válido!");
-                return;
-            }
 
             await putData(`/artistas/${id}`, {
                 nome,
@@ -273,26 +288,32 @@ function addEventListeners() {
                 id_grupo: idGrupo,
             });
 
-            fetchData("/artistas", "listaArtistas");
+            await atualizarListas();
         });
     }
 
     const deletarArtistaForm = document.getElementById("deletarArtistaForm");
-    if (deletarArtistaForm) {
-        deletarArtistaForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const nome = document.getElementById("artistaNomeDeletar").value;
+if (deletarArtistaForm) {
+    deletarArtistaForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("artistaIdDeletar").value;
 
-            try {
-                await deleteData(`/artistas/${nome}`);
-                alert("Artista deletado com sucesso!");
-                fetchData("/artistas", "listaArtistas");
-            } catch (err) {
-                console.error("Erro ao deletar artista:", err);
-                alert(err.message);
-            }
-        });
-    }
+        if (!id) {
+            alert("Por favor, insira um ID válido.");
+            return;
+        }
+
+        try {
+            await deleteData(`/artistas/${id}`);
+            alert("Artista deletado com sucesso!");
+            await atualizarListas();
+        } catch (err) {
+            console.error("Erro ao deletar artista:", err);
+            alert(err.message);
+        }
+    });
+}
+
 
     const discoForm = document.getElementById("discoForm");
     if (discoForm) {
@@ -304,7 +325,7 @@ function addEventListeners() {
             const lancamento = document.getElementById("discoLancamento").value;
             console.log("Dados do disco:", { nome, compositores, lancamento });
             await postData("/discografia", { nome, compositores, lancamento });
-            fetchData("/discografia", "listaDiscografia");
+            await atualizarListas();
         });
     } else {
         console.log("discoForm não encontrado");
@@ -320,7 +341,7 @@ function addEventListeners() {
             const lancamento = document.getElementById("discoLancamentoAlterar").value || null;
 
             await putData(`/discografia/${id}`, { novoNome, compositores, lancamento });
-            fetchData("/discografia", "listaDiscografia");
+            await atualizarListas();
         });
     }
 
@@ -333,7 +354,7 @@ function addEventListeners() {
             try {
                 await deleteData(`/discografia/${id}`);
                 alert("Disco deletado com sucesso!");
-                fetchData("/discografia", "listaDiscografia");
+                await atualizarListas();
             } catch (err) {
                 console.error("Erro ao deletar disco:", err);
                 alert(err.message);

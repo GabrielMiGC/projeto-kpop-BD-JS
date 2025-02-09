@@ -27,13 +27,20 @@ const ArtistaController = {
   criar: async (req, res) => {
     try {
       const { nome, ativo, meses_treino, papel, debute, id_grupo } = req.body;
-
+      console.log('Dados para criação:', { nome, ativo, meses_treino, papel, debute, id_grupo: id_grupo || null, nome });
       // Validação básica dos dados
-      if (!nome || ativo === undefined || !meses_treino || !papel || debute === undefined || !id_grupo) {
-        return res.status(400).json({ error: 'Dados inválidos: nome, ativo, meses_treino, papel, debute e id_grupo são obrigatórios' });
+      if (!nome || ativo === undefined || !meses_treino || !papel || debute === undefined) {
+        return res.status(400).json({ error: 'Dados inválidos: nome, ativo, meses_treino, papel, debute são obrigatórios' });
       }
 
-      const novoArtista = await ArtistaModel.create({ nome, ativo, meses_treino, papel, debute, id_grupo });
+      const novoArtista = await ArtistaModel.create({
+        nome,
+        ativo,
+        meses_treino,
+        papel,
+        debute,
+        id_grupo: id_grupo || null // Garante que id_grupo seja null se não enviado
+      });
       res.status(201).json(novoArtista);
     } catch (error) {
       console.error('Erro ao adicionar artista:', error);
@@ -43,11 +50,19 @@ const ArtistaController = {
 
   alterar: async (req, res) => {
     try {
-      const { nome } = req.params;
-      const { novoNome, ativo, meses_treino, papel, debute, id_grupo } = req.body;
-
-      const artistaAtualizado = await ArtistaModel.alterar(nome, { novoNome, ativo, meses_treino, papel, debute, id_grupo });
-      res.status(200).json(artistaAtualizado);
+      console.log("Dados recebidos no backend:", req.body);
+      const { id } = req.params;
+      const { nome, ativo, meses_treino, papel, debute, id_grupo } = req.body;
+      
+      const artistaAtualizado = await ArtistaModel.alterar(id, {
+        nome,
+        ativo,
+        meses_treino,
+        papel,
+        debute,
+        id_grupo: id_grupo || null
+      });
+      res.status(200).json({message: 'Infos do Artista alteradas', artista: artistaAtualizado});
     } catch (error) {
       console.error('Erro ao alterar artista:', error);
       res.status(500).json({ error: 'Erro ao alterar artista' });
@@ -56,14 +71,15 @@ const ArtistaController = {
 
   deletar: async (req, res) => {
     try {
-      const { nome } = req.params;
-      const artistaDeletado = await ArtistaModel.delete(nome);
-      res.status(200).json({ message: 'Artista deletado com sucesso', artista: artistaDeletado });
+        const { id } = req.params;
+        const artistaDeletado = await ArtistaModel.delete(id);
+        res.status(200).json({ message: 'Artista deletado com sucesso', artista: artistaDeletado });
     } catch (error) {
-      console.error('Erro ao deletar artista:', error);
-      res.status(500).json({ error: 'Erro ao deletar artista' });
+        console.error('Erro ao deletar artista:', error);
+        res.status(500).json({ error: 'Erro ao deletar artista' });
     }
-  }
+}
+
 };
 
 module.exports = ArtistaController;

@@ -57,8 +57,6 @@ const GruposModel = {
                 }
             }
 
-            console.log(`Atualizando grupo com ID: ${id}`);
-            console.log(`Novos dados: Nome: ${nome}, Disbanded: ${disbanded}, Debute: ${debute}, ID Empresa: ${id_empresa}`);
 
             const result = await client.query(
                 `UPDATE grupos 
