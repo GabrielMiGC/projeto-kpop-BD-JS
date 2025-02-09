@@ -6,7 +6,7 @@ function updateList(elementId, data) {
         data.forEach(item => {
             const li = document.createElement("li");
             li.textContent = JSON.stringify(item);
-            li.classList.add("list-item"); // Adiciona a classe list-item
+            li.classList.add("list-item"); 
             list.appendChild(li);
         });
     } else {

@@ -30,10 +30,13 @@ async function atualizarListas() {
 document.addEventListener("DOMContentLoaded", async () => {
     await loadComponent("components/forms.html", "content");
     await loadComponent("components/lists.html", "content");
-
+    
     addEventListeners();
     await atualizarListas();
+
+    setTimeout(carregarPremios, 500);
 });
+
 
 async function carregarPapeis() {
     try {
@@ -43,7 +46,7 @@ async function carregarPapeis() {
         const papeis = await response.json();
         console.log("Papéis carregados:", papeis); // Debug
 
-  
+
         const selects = [
             document.getElementById('artistaPapel'),
             document.getElementById('artistaPapelAlterar')
@@ -51,7 +54,7 @@ async function carregarPapeis() {
 
         selects.forEach(select => {
             if (select) {
-                select.innerHTML = ''; 
+                select.innerHTML = '';
 
                 const defaultOption = document.createElement('option');
                 defaultOption.value = "";
@@ -74,9 +77,43 @@ async function carregarPapeis() {
     }
 }
 
-
 document.addEventListener("DOMContentLoaded", carregarPapeis);
 
+async function carregarPremios() {
+    try {
+        const response = await fetch('/premios'); // Certifique-se de que esta rota está correta
+        if (!response.ok) throw new Error('Erro ao carregar prêmios');
+
+        const premios = await response.json();
+        console.log("Prêmios carregados:", premios); // Verifique se os prêmios estão sendo recebidos
+
+        const tabela = document.getElementById("tabelaPremios");
+
+        if (!tabela) {
+            console.error("Erro: Elemento tabelaPremios não encontrado no DOM!");
+            return;
+        }
+
+        tabela.innerHTML = ""; 
+
+        premios.forEach(premio => {
+            const tr = document.createElement("tr");
+
+            const tdId = document.createElement("td");
+            tdId.textContent = premio.id_premio;
+
+            const tdNome = document.createElement("td");
+            tdNome.textContent = premio.nome;
+
+            tr.appendChild(tdId);
+            tr.appendChild(tdNome);
+            tabela.appendChild(tr);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar prêmios:', error);
+    }
+}
+document.addEventListener("DOMContentLoaded", carregarPremios);
 
 function addEventListeners() {
     const conglomeradoForm = document.getElementById("conglomeradoForm");
@@ -137,7 +174,7 @@ function addEventListeners() {
             await atualizarListas();
         });
     }
-    
+
     const alterarEmpresaForm = document.getElementById("alterarEmpresaForm");
     if (alterarEmpresaForm) {
         alterarEmpresaForm.addEventListener("submit", async (e) => {
@@ -293,26 +330,26 @@ function addEventListeners() {
     }
 
     const deletarArtistaForm = document.getElementById("deletarArtistaForm");
-if (deletarArtistaForm) {
-    deletarArtistaForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const id = document.getElementById("artistaIdDeletar").value;
+    if (deletarArtistaForm) {
+        deletarArtistaForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("artistaIdDeletar").value;
 
-        if (!id) {
-            alert("Por favor, insira um ID válido.");
-            return;
-        }
+            if (!id) {
+                alert("Por favor, insira um ID válido.");
+                return;
+            }
 
-        try {
-            await deleteData(`/artistas/${id}`);
-            alert("Artista deletado com sucesso!");
-            await atualizarListas();
-        } catch (err) {
-            console.error("Erro ao deletar artista:", err);
-            alert(err.message);
-        }
-    });
-}
+            try {
+                await deleteData(`/artistas/${id}`);
+                alert("Artista deletado com sucesso!");
+                await atualizarListas();
+            } catch (err) {
+                console.error("Erro ao deletar artista:", err);
+                alert(err.message);
+            }
+        });
+    }
 
 
     const discoForm = document.getElementById("discoForm");
@@ -361,4 +398,79 @@ if (deletarArtistaForm) {
             }
         });
     }
+
+    document.getElementById("atribuirPremioForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+    
+        const id_premio = document.getElementById("idPremio").value;
+        const id_artista = document.getElementById("idArtista").value || null;
+        const id_grupo = document.getElementById("idGrupo").value || null;
+    
+        try {
+            if (id_artista) {
+                await postData("/premios/atribuir/artista", { id_premio: parseInt(id_premio), id_artista: parseInt(id_artista) });
+            }
+            if (id_grupo) {
+                await postData("/premios/atribuir/grupo", { id_premio: parseInt(id_premio), id_grupo: parseInt(id_grupo) });
+            }
+    
+            alert("Prêmio atribuído com sucesso!");
+            carregarPremios(); // Atualiza a lista de prêmios
+        } catch (err) {
+            console.error("Erro ao atribuir prêmio:", err);
+            alert(err.message);
+        }
+        
+    });
+}
+
+function executarPesquisa() {
+    const tipoPesquisa = document.getElementById('tipoPesquisa').value;
+    const idPesquisa = document.getElementById('idPesquisa').value;
+    const resultadoPesquisa = document.getElementById('resultadoPesquisa');
+
+    // Limpar resultados anteriores
+    resultadoPesquisa.innerHTML = '';
+
+    // Lógica para executar a pesquisa com base no tipo e ID
+    if (idPesquisa) {
+        switch (tipoPesquisa) {
+            case 'grupo_premio':
+                buscarPremiosGrupo(idPesquisa);
+                break;
+            case 'artista_premio':
+                buscarPremiosArtista(idPesquisa);
+                break;
+            case 'disco_artista':
+                buscarArtistasDisco(idPesquisa);
+                break;
+            case 'artista_papel':
+                buscarPapeisArtista(idPesquisa);
+                break;
+            default:
+                resultadoPesquisa.innerHTML = 'Tipo de pesquisa inválido.';
+        }
+    } else {
+        resultadoPesquisa.innerHTML = 'Por favor, insira um ID válido para a pesquisa.';
+    }
+}
+
+function buscarPremiosGrupo(id) {
+    // Implementar lógica para buscar prêmios de um grupo
+    console.log(`Buscando prêmios para o grupo com ID ${id}`);
+}
+
+function buscarPremiosArtista(id) {
+    // Implementar lógica para buscar prêmios de um artista
+    console.log(`Buscando prêmios para o artista com ID ${id}`);
+}
+
+function buscarArtistasDisco(disco_id) {
+    "SELECT * FROM discografia_artista WHERE disco_id = $1";
+    console.log(`Buscando artistas para o disco com ID ${disco_id}`);
+}
+
+function buscarPapeisArtista(nome_papel) {
+    'SELECT * FROM artistas WHERE papel = $1';
+    console.log(`Buscando papéis para o artista com ID ${nome_papel}`);
 }
