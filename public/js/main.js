@@ -24,6 +24,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     await fetchData("/discografia", "listaDiscografia");
 });
 
+async function carregarPapeis() {
+    try {
+        const response = await fetch('/papeis');
+        if (!response.ok) throw new Error('Erro ao carregar papéis');
+
+        const papeis = await response.json();
+        console.log("Papéis carregados:", papeis);
+
+        const selects = [
+            document.getElementById('artistaPapel'),
+            document.getElementById('artistaPapelAlterar')
+        ];
+
+        selects.forEach(select => {
+            if (select) {
+                select.innerHTML = ''; // Limpar opções anteriores
+                papeis.forEach(papel => {
+                    const option = document.createElement('option');
+                    option.value = papel.nome;
+                    option.textContent = papel.nome;
+                    select.appendChild(option);
+                });
+            }
+        });
+    } catch (error) {
+        console.error('Erro ao carregar papéis:', error);
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", carregarPapeis);
 
 
 function addEventListeners() {

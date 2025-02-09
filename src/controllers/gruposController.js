@@ -43,10 +43,11 @@ const GruposController = {
 
     alterar: async (req, res) => {
         try {
-            const { nome } = req.params;
-            const { novoNome, disbanded, debute, id_empresa } = req.body;
+            console.log("Dados recebidos no backend:", req.body);
+            const { id } = req.params;
+            const { nome, disbanded, debute, id_empresa } = req.body;
 
-            const grupoAtualizado = await GruposModel.alterar(nome, { novoNome, disbanded, debute, id_empresa });
+            const grupoAtualizado = await GruposModel.alterar(id, { nome, disbanded, debute, id_empresa });
             res.status(200).json(grupoAtualizado);
         } catch (error) {
             console.error('Erro ao alterar grupo:', error);

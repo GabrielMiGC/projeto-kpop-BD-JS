@@ -43,23 +43,32 @@ const GruposModel = {
         }
     },
 
-    alterar: async (nome, novosDados) => {
-        const { novoNome, disbanded, debute, id_empresa } = novosDados;
+    alterar: async (id, novosDados) => {
+        const { nome, disbanded, debute, id_empresa } = novosDados;
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
 
             // Verifica se a empresa existe (se id_empresa for fornecido)
             if (id_empresa) {
-                const empresaExiste = await client.query('SELECT * FROM empresas WHERE id = $1', [id_empresa]);
+                const empresaExiste = await client.query('SELECT * FROM empresas WHERE id_empresa = $1', [id_empresa]);
                 if (empresaExiste.rowCount === 0) {
                     throw new Error('Empresa não encontrada');
                 }
             }
 
+            console.log(`Atualizando grupo com ID: ${id}`);
+            console.log(`Novos dados: Nome: ${nome}, Disbanded: ${disbanded}, Debute: ${debute}, ID Empresa: ${id_empresa}`);
+
             const result = await client.query(
-                'UPDATE grupos SET nome = COALESCE($1, nome), disbanded = COALESCE($2, disbanded), debute = COALESCE($3, debute), id_empresa = COALESCE($4, id_empresa) WHERE nome = $5 RETURNING *',
-                [novoNome, disbanded, debute, id_empresa, nome]
+                `UPDATE grupos 
+                 SET nome = COALESCE($1, nome), 
+                     disbanded = COALESCE($2, disbanded), 
+                     debute = COALESCE($3, debute), 
+                     id_empresa = COALESCE($4, id_empresa) 
+                 WHERE id_grupo = $5 
+                 RETURNING *`,
+                [nome || null, disbanded !== undefined ? disbanded : null, debute || null, id_empresa || null, id]
             );
 
             if (result.rowCount === 0) {
@@ -67,6 +76,7 @@ const GruposModel = {
             }
 
             await client.query('COMMIT');
+            console.log('Grupo atualizado com sucesso:', result.rows[0]);
             return result.rows[0];
         } catch (err) {
             await client.query('ROLLBACK');

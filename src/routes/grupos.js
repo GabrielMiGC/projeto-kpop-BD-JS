@@ -5,7 +5,7 @@ const GrupoController = require('../controllers/gruposController');
 router.get('/', GrupoController.listar);
 router.get('/:nome', GrupoController.buscarPorNome);
 router.post('/', GrupoController.criar);
-router.put('/:nome', GrupoController.alterar);
+router.put('/:id', GrupoController.alterar);
 router.delete('/:id', GrupoController.deletar);
 
 module.exports = router;
