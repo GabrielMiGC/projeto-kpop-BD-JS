@@ -28,7 +28,7 @@ const ArtistaController = {
     try {
       const { nome, ativo, meses_treino, papel, debute, id_grupo } = req.body;
       console.log('Dados para criação:', { nome, ativo, meses_treino, papel, debute, id_grupo: id_grupo || null, nome });
-      // Validação básica dos dados
+
       if (!nome || ativo === undefined || !meses_treino || !papel || debute === undefined) {
         return res.status(400).json({ error: 'Dados inválidos: nome, ativo, meses_treino, papel, debute são obrigatórios' });
       }
@@ -39,7 +39,7 @@ const ArtistaController = {
         meses_treino,
         papel,
         debute,
-        id_grupo: id_grupo || null // Garante que id_grupo seja null se não enviado
+        id_grupo: id_grupo || null 
       });
       res.status(201).json(novoArtista);
     } catch (error) {

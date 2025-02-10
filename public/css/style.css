@@ -1,47 +1,167 @@
+/* Configuração geral */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #6a0dad, #3b5998, #e91e63);
+    color: white;
     margin: 0;
     padding: 20px;
     text-align: center;
 }
 
+/* Título principal */
 h1 {
-    color: #333;
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
 }
 
+/* Seções */
+h2 {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+/* Estilo dos formulários */
 form {
-    background: white;
-    padding: 15px;
-    margin: 10px auto;
-    border-radius: 5px;
-    width: 300px;
-    box-shadow: 0px 0px 10px #ccc;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    margin: 15px auto;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 input, select, button {
     width: 100%;
-    margin-top: 5px;
-    padding: 8px;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1em;
+}
+
+input, select {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
 }
 
 button {
-    background-color: #007BFF;
+    background-color: #e91e63;
     color: white;
-    border: none;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #c2185b;
 }
 
-/* Estilo para os itens da lista */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
 .list-item {
-    background-color: #6a0dad; /* Cor roxa */
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    text-align: left;
+    font-weight: bold;
+}
+
+table {
+    width: 90%;
+    margin: auto;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+th {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+td {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#resultadoPesquisa {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+#content, #pesquisa {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#resultadoPesquisa {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resultado-header h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.resultado-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.resultado-table th,
+.resultado-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.resultado-table th {
+    background-color: #3498db;
     color: white;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px #ccc;
+    font-weight: 600;
+}
+
+.resultado-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.sem-resultados {
+    padding: 15px;
+    color: #7f8c8d;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    form {
+        width: 100%;
+    }
+    
+    table {
+        width: 100%;
+    }
 }

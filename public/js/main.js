@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     addEventListeners();
     await atualizarListas();
+    await carregarPapeis();
 
     setTimeout(carregarPremios, 500);
 });
@@ -42,11 +43,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function carregarPapeis() {
     try {
-        const response = await fetch('/papeis');
+        const response = await fetch('/api/papeis');
         if (!response.ok) throw new Error('Erro ao carregar papéis');
 
         const papeis = await response.json();
-        console.log("Papéis carregados:", papeis); // Debug
+        console.log("Papéis carregados:", papeis); 
 
 
         const selects = [
@@ -423,6 +424,61 @@ function addEventListeners() {
             alert(err.message);
         }
     });
+
+    document.getElementById('atribuirGrupoDiscoForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+    
+        const id_discografia = parseInt(document.getElementById('idDiscografiaGrupo').value);
+        const id_grupo = parseInt(document.getElementById('idGrupoDisco').value);
+    
+        if (isNaN(id_discografia) || isNaN(id_grupo)) {
+            alert("IDs devem ser números inteiros.");
+            return;
+        }
+    
+        try {
+            const response = await fetch('/api/pesquisas/atribuir_grupo_disco', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_discografia, id_grupo })
+            });
+    
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "Erro ao atribuir disco ao grupo");
+    
+            alert("Disco atribuído ao grupo com sucesso!");
+        } catch (error) {
+            console.error('Erro ao atribuir disco ao grupo:', error);
+        }
+    });
+    
+    document.getElementById('atribuirArtistaDiscoForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+    
+        const id_discografia = parseInt(document.getElementById('idDiscografiaArtista').value);
+        const id_artista = parseInt(document.getElementById('idArtistaDisco').value);
+    
+        if (isNaN(id_discografia) || isNaN(id_artista)) {
+            alert("IDs devem ser números inteiros.");
+            return;
+        }
+    
+        try {
+            const response = await fetch('/api/pesquisas/atribuir_artista_disco', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_discografia, id_artista })
+            });
+    
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "Erro ao atribuir disco ao artista");
+    
+            alert("Disco atribuído ao artista com sucesso!");
+        } catch (error) {
+            console.error('Erro ao atribuir disco ao artista:', error);
+        }
+    });
+    
     
 }
 
@@ -468,6 +524,52 @@ async function buscarArtistasDisco(disco_id) {
     }
 }
 
+async function buscarGruposDisco(disco_id) {
+    try {
+        const response = await fetch(`/api/pesquisas/disco_grupo/${disco_id}`);
+        if (!response.ok) throw new Error('Erro ao buscar grupos do disco');
+
+        const data = await response.json();
+        mostrarResultadoPesquisa(data, `Grupos que participaram do disco ${disco_id}`);
+    } catch (error) {
+        console.error('Erro ao buscar grupos do disco:', error);
+    }
+}
+
+async function atribuirGrupoADisco(id_discografia, id_grupo) {
+    try {
+        const response = await fetch('/api/pesquisas/atribuir_grupo_disco', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_discografia, id_grupo })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Erro ao atribuir grupo ao disco");
+
+        alert("Grupo atribuído ao disco com sucesso!");
+    } catch (error) {
+        console.error('Erro ao atribuir grupo ao disco:', error);
+    }
+}
+
+async function atribuirArtistaADisco(id_discografia, id_artista) {
+    try {
+        const response = await fetch('/api/pesquisas/atribuir_artista_disco', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_discografia, id_artista })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Erro ao atribuir artista ao disco");
+
+        alert("Artista atribuído ao disco com sucesso!");
+    } catch (error) {
+        console.error('Erro ao atribuir artista ao disco:', error);
+    }
+}
+
 async function buscarPapeisArtista(id_artista) {
     try {
         const response = await fetch(`/api/pesquisas/artista_papel/${id_artista}`);
@@ -484,22 +586,45 @@ async function buscarPapeisArtista(id_artista) {
 
 function mostrarResultadoPesquisa(data, titulo) {
     const resultadoPesquisa = document.getElementById('resultadoPesquisa');
-    resultadoPesquisa.innerHTML = `<h3>${titulo}</h3>`;
+    resultadoPesquisa.innerHTML = `
+        <div class="resultado-header">
+            <h3>${titulo}</h3>
+        </div>
+    `;
 
     if (data.length === 0) {
-        resultadoPesquisa.innerHTML += "<p>Nenhum resultado encontrado.</p>";
+        resultadoPesquisa.innerHTML += `
+            <div class="sem-resultados">
+                Nenhum resultado encontrado
+            </div>
+        `;
         return;
     }
 
-    const ul = document.createElement("ul");
+    const table = document.createElement('table');
+    table.className = 'resultado-table';
+
+    const headerRow = document.createElement('tr');
+    Object.keys(data[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key.replace(/_/g, ' ').toUpperCase();
+        headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
     data.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = JSON.stringify(item);
-        ul.appendChild(li);
+        const row = document.createElement('tr');
+        Object.values(item).forEach(value => {
+            const td = document.createElement('td');
+            td.textContent = value;
+            row.appendChild(td);
+        });
+        table.appendChild(row);
     });
 
-    resultadoPesquisa.appendChild(ul);
+    resultadoPesquisa.appendChild(table);
 }
+
 
 function executarPesquisa() {
     const tipoPesquisa = document.getElementById('tipoPesquisa').value;
@@ -518,6 +643,9 @@ function executarPesquisa() {
                 break;
             case 'disco_artista':
                 buscarArtistasDisco(idPesquisa);
+                break;
+            case 'disco_grupo':
+                buscarGruposDisco(idPesquisa);
                 break;
             case 'artista_papel':
                 buscarPapeisArtista(idPesquisa);

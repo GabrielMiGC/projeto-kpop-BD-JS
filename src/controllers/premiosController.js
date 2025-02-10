@@ -41,6 +41,7 @@ const PremiosController = {
         }
     },
     
+    
     exibir: async (req, res) => {
         try {
             const result = await pool.query('SELECT * FROM premios ORDER BY id_premio');
