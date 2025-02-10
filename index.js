@@ -19,7 +19,9 @@ const empresasRoutes = require('./src/routes/empresas');
 const gruposRoutes = require('./src/routes/grupos');
 const discografiaRoutes = require('./src/routes/discografia');
 const papeisRouter = require('./src/routes/papeis');
+const pesquisasRouter = require('./src/routes/pesquisas');
 const premiosRouter = require('./src/routes/premios');
+
 
 app.use('/api/artistas', artistasRoutes);
 app.use('/api/conglomerados', conglomeradosRoutes);
@@ -27,6 +29,7 @@ app.use('/api/empresas', empresasRoutes);
 app.use('/api/grupos', gruposRoutes);
 app.use('/api/discografia', discografiaRoutes);
 app.use('/api/papeis', papeisRouter);
+app.use('/api/pesquisas', pesquisasRouter);
 app.use('/api/premios', premiosRouter);
 
 app.use(express.static(path.join(__dirname, "public"))); 

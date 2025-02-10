@@ -428,20 +428,26 @@ function addEventListeners() {
 
 async function buscarPremiosGrupo(id) {
     try {
-        const response = await fetch(`/pesquisas/grupo_premio/${id}`);
-        if (!response.ok) throw new Error('Erro ao buscar prêmios do grupo');
+        const response = await fetch(`/api/pesquisas/grupo_premio/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
 
-        const data = await response.json();
+        const data = await response.json(); 
+
         mostrarResultadoPesquisa(data, `Prêmios do grupo ${id}`);
     } catch (error) {
-        console.error('Erro ao buscar prêmios do grupo:', error);
+        console.error('Erro completo:', error);
+        mostrarResultadoPesquisa([], `Falha na busca: ${error.message}`);
     }
 }
 
 async function buscarPremiosArtista(id) {
     try {
-        const response = await fetch(`/pesquisas/artista_premio/${id}`);
-        if (!response.ok) throw new Error('Erro ao buscar prêmios do artista');
+        const response = await fetch(`/api/pesquisas/artista_premio/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
 
         const data = await response.json();
         mostrarResultadoPesquisa(data, `Prêmios do artista ${id}`);
@@ -452,7 +458,7 @@ async function buscarPremiosArtista(id) {
 
 async function buscarArtistasDisco(disco_id) {
     try {
-        const response = await fetch(`/pesquisas/disco_artista/${disco_id}`);
+        const response = await fetch(`/api/pesquisas/disco_artista/${disco_id}`);
         if (!response.ok) throw new Error('Erro ao buscar artistas do disco');
 
         const data = await response.json();
@@ -464,8 +470,10 @@ async function buscarArtistasDisco(disco_id) {
 
 async function buscarPapeisArtista(id_artista) {
     try {
-        const response = await fetch(`/pesquisas/artista_papel/${id_artista}`);
-        if (!response.ok) throw new Error('Erro ao buscar papéis do artista');
+        const response = await fetch(`/api/pesquisas/artista_papel/${id_artista}`);
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
 
         const data = await response.json();
         mostrarResultadoPesquisa(data, `Papéis do artista ${id_artista}`);

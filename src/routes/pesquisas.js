@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
-const PremiosController = require('../controllers/premiosController');
 const PesquisasController = require('../controllers/pesquisasController');
 
 // Buscar prêmios de um grupo

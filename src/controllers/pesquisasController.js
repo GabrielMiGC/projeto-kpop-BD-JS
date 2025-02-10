@@ -4,10 +4,13 @@ const PesquisasController = {
     grupo_premio: async (req, res) => {
             try {
                 const { id } = req.params;
-                const result = await pool.query(
-                    'SELECT premios.nome FROM grupo_premio INNER JOIN premios ON grupo_premio.id_premio = premios.id_premio WHERE grupo_premio.id_grupo = $1',
-                    [id]
+                const result = await pool.query(`SELECT p.nome 
+                FROM grupo_premio gp
+                JOIN premios p ON gp.id_premio = p.id_premio
+                WHERE gp.id_grupo = $1`,
+                [id]
                 );
+                
                 res.json(result.rows);
             } catch (error) {
                 res.status(500).json({ error: "Erro ao buscar prêmios do grupo" });
