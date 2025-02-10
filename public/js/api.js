@@ -20,7 +20,7 @@ async function postData(endpoint, body) {
         });
 
         if (!response.ok) {
-            const errorData = await response.json(); // Captura a mensagem de erro do servidor
+            const errorData = await response.json();
             throw new Error(`Erro: ${errorData.error || response.statusText}`);
         }
 
@@ -58,7 +58,7 @@ async function deleteData(endpoint) {
         });
 
         if (!response.ok) {
-            const errorData = await response.json(); // Captura a mensagem de erro do servidor
+            const errorData = await response.json(); 
             throw new Error(`Erro: ${errorData.error || response.statusText}`);
         }
 

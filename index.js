@@ -7,7 +7,7 @@ require('dotenv').config();
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public"))); 
+
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
@@ -26,8 +26,16 @@ app.use('/api/conglomerados', conglomeradosRoutes);
 app.use('/api/empresas', empresasRoutes);
 app.use('/api/grupos', gruposRoutes);
 app.use('/api/discografia', discografiaRoutes);
-app.use('/papeis', papeisRouter);
-app.use('/premios', premiosRouter);
+app.use('/api/papeis', papeisRouter);
+app.use('/api/premios', premiosRouter);
+
+app.use(express.static(path.join(__dirname, "public"))); 
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
+
+app._router.stack.forEach((r) => {
+    if (r.route && r.route.path) {
+        console.log(`Rota registrada: ${r.route.path}`);
+    }
+});

@@ -5,8 +5,8 @@ const PremiosController = {
         try {
             const { id_premio, id_grupo } = req.body;
 
-            if (!id_premio || !id_grupo) {
-                return res.status(400).json({ error: "ID do prêmio e ID do grupo são obrigatórios" });
+            if (!Number.isInteger(id_premio) || !Number.isInteger(id_grupo)) {
+                return res.status(400).json({ error: "IDs devem ser números inteiros" });
             }
 
             const result = await pool.query(
@@ -25,8 +25,8 @@ const PremiosController = {
         try {
             const { id_premio, id_artista } = req.body;
 
-            if (!id_premio || !id_artista) {
-                return res.status(400).json({ error: "ID do prêmio e ID do artista são obrigatórios" });
+            if (!Number.isInteger(id_premio) || !Number.isInteger(id_artista)) {
+                return res.status(400).json({ error: "IDs devem ser números inteiros" });
             }
 
             const result = await pool.query(

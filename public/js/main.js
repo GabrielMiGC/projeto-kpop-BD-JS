@@ -1,3 +1,5 @@
+
+
 async function loadComponent(url, elementId) {
     try {
         const response = await fetch(url);
@@ -77,15 +79,15 @@ async function carregarPapeis() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", carregarPapeis);
+
 
 async function carregarPremios() {
     try {
-        const response = await fetch('/premios'); // Certifique-se de que esta rota está correta
+        const response = await fetch('/api/premios'); 
         if (!response.ok) throw new Error('Erro ao carregar prêmios');
 
         const premios = await response.json();
-        console.log("Prêmios carregados:", premios); // Verifique se os prêmios estão sendo recebidos
+        console.log("Prêmios carregados:", premios);
 
         const tabela = document.getElementById("tabelaPremios");
 
@@ -401,27 +403,94 @@ function addEventListeners() {
 
     document.getElementById("atribuirPremioForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-    
+        
         const id_premio = document.getElementById("idPremio").value;
         const id_artista = document.getElementById("idArtista").value || null;
         const id_grupo = document.getElementById("idGrupo").value || null;
     
         try {
             if (id_artista) {
-                await postData("/premios/atribuir/artista", { id_premio: parseInt(id_premio), id_artista: parseInt(id_artista) });
+                await postData("/premios/artista", { id_premio: parseInt(id_premio), id_artista: parseInt(id_artista) });
             }
             if (id_grupo) {
-                await postData("/premios/atribuir/grupo", { id_premio: parseInt(id_premio), id_grupo: parseInt(id_grupo) });
+                await postData("/premios/grupo", { id_premio: parseInt(id_premio), id_grupo: parseInt(id_grupo) });
             }
     
             alert("Prêmio atribuído com sucesso!");
-            carregarPremios(); // Atualiza a lista de prêmios
+            carregarPremios();
         } catch (err) {
             console.error("Erro ao atribuir prêmio:", err);
             alert(err.message);
         }
-        
     });
+    
+}
+
+async function buscarPremiosGrupo(id) {
+    try {
+        const response = await fetch(`/pesquisas/grupo_premio/${id}`);
+        if (!response.ok) throw new Error('Erro ao buscar prêmios do grupo');
+
+        const data = await response.json();
+        mostrarResultadoPesquisa(data, `Prêmios do grupo ${id}`);
+    } catch (error) {
+        console.error('Erro ao buscar prêmios do grupo:', error);
+    }
+}
+
+async function buscarPremiosArtista(id) {
+    try {
+        const response = await fetch(`/pesquisas/artista_premio/${id}`);
+        if (!response.ok) throw new Error('Erro ao buscar prêmios do artista');
+
+        const data = await response.json();
+        mostrarResultadoPesquisa(data, `Prêmios do artista ${id}`);
+    } catch (error) {
+        console.error('Erro ao buscar prêmios do artista:', error);
+    }
+}
+
+async function buscarArtistasDisco(disco_id) {
+    try {
+        const response = await fetch(`/pesquisas/disco_artista/${disco_id}`);
+        if (!response.ok) throw new Error('Erro ao buscar artistas do disco');
+
+        const data = await response.json();
+        mostrarResultadoPesquisa(data, `Artistas que participaram do disco ${disco_id}`);
+    } catch (error) {
+        console.error('Erro ao buscar artistas do disco:', error);
+    }
+}
+
+async function buscarPapeisArtista(id_artista) {
+    try {
+        const response = await fetch(`/pesquisas/artista_papel/${id_artista}`);
+        if (!response.ok) throw new Error('Erro ao buscar papéis do artista');
+
+        const data = await response.json();
+        mostrarResultadoPesquisa(data, `Papéis do artista ${id_artista}`);
+    } catch (error) {
+        console.error('Erro ao buscar papéis do artista:', error);
+    }
+}
+
+function mostrarResultadoPesquisa(data, titulo) {
+    const resultadoPesquisa = document.getElementById('resultadoPesquisa');
+    resultadoPesquisa.innerHTML = `<h3>${titulo}</h3>`;
+
+    if (data.length === 0) {
+        resultadoPesquisa.innerHTML += "<p>Nenhum resultado encontrado.</p>";
+        return;
+    }
+
+    const ul = document.createElement("ul");
+    data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = JSON.stringify(item);
+        ul.appendChild(li);
+    });
+
+    resultadoPesquisa.appendChild(ul);
 }
 
 function executarPesquisa() {
@@ -429,10 +498,8 @@ function executarPesquisa() {
     const idPesquisa = document.getElementById('idPesquisa').value;
     const resultadoPesquisa = document.getElementById('resultadoPesquisa');
 
-    // Limpar resultados anteriores
     resultadoPesquisa.innerHTML = '';
 
-    // Lógica para executar a pesquisa com base no tipo e ID
     if (idPesquisa) {
         switch (tipoPesquisa) {
             case 'grupo_premio':
@@ -453,24 +520,4 @@ function executarPesquisa() {
     } else {
         resultadoPesquisa.innerHTML = 'Por favor, insira um ID válido para a pesquisa.';
     }
-}
-
-function buscarPremiosGrupo(id) {
-    // Implementar lógica para buscar prêmios de um grupo
-    console.log(`Buscando prêmios para o grupo com ID ${id}`);
-}
-
-function buscarPremiosArtista(id) {
-    // Implementar lógica para buscar prêmios de um artista
-    console.log(`Buscando prêmios para o artista com ID ${id}`);
-}
-
-function buscarArtistasDisco(disco_id) {
-    "SELECT * FROM discografia_artista WHERE disco_id = $1";
-    console.log(`Buscando artistas para o disco com ID ${disco_id}`);
-}
-
-function buscarPapeisArtista(nome_papel) {
-    'SELECT * FROM artistas WHERE papel = $1';
-    console.log(`Buscando papéis para o artista com ID ${nome_papel}`);
 }
